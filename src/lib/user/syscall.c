@@ -182,3 +182,9 @@ inumber (int fd)
 {
   return syscall1 (SYS_INUMBER, fd);
 }
+
+bool
+io_down(const char* name, const unsigned int ticks)
+{
+    return syscall2 (SYS_IODOWN, name, ticks);
+}
