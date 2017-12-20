@@ -15,6 +15,7 @@
 #include "devices/timer.h"
 #include "devices/vga.h"
 #include "devices/rtc.h"
+#include "devices/fake_io.h"
 #include "threads/interrupt.h"
 #include "threads/io.h"
 #include "threads/loader.h"
@@ -126,6 +127,11 @@ pintos_init (void)
   locate_block_devices ();
   filesys_init (format_filesys);
 #endif
+
+  /* Add fake I/O devices */
+  io_init("A");
+  io_init("B");
+  io_init("C");
 
   printf ("Boot complete.\n");
   
