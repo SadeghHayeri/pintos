@@ -7,7 +7,7 @@
 int
 main (void)
 {
-    io_down("A", 500);
+    io_down(0, 500);
     /* not reached */
 }
 

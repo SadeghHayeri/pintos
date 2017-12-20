@@ -9,24 +9,24 @@
 #include "devices/timer.h"
 #include "threads/malloc.h"
 
-void io_init(const char* name);
-void io_down(const char* name, const int64_t ticks);
-struct io_device* _find_io_device_by_name(const char* name);
+void io_init(const unsigned id);
+void io_down(const unsigned id, const unsigned ticks);
+struct io_device* _find_io_device_by_id(const unsigned id);
 
 void
-io_init(const char* name)
+io_init(const unsigned id)
 {
     struct io_device *io_device = malloc (sizeof *io_device);
     if (io_device == NULL)
         PANIC ("Failed to allocate memory for io_device descriptor");
 
     list_push_back (&io_devices, &io_device->list_elem);
-    strlcpy (io_device->name, name, sizeof io_device->name);
+    io_device->id = id;
     sema_init(&io_device->in_use, 1);
 }
 
 struct io_device*
-_find_io_device_by_name(const char* name)
+_find_io_device_by_id(const unsigned id)
 {
     struct list_elem *e;
 
@@ -34,7 +34,7 @@ _find_io_device_by_name(const char* name)
         e != list_end (&io_devices);
         e = list_next (e)) {
         struct io_device *io_device = list_entry (e, struct io_device, list_elem);
-        if (!strcmp (name, io_device->name))
+        if (id == io_device->id)
             return io_device;
     }
 
@@ -43,18 +43,19 @@ _find_io_device_by_name(const char* name)
 
 
 void
-io_down(const char* name, const int64_t ticks)
+io_down(const unsigned id, const unsigned ticks)
 {
-    struct io_device *io_device = _find_io_device_by_name(name);
-    if(io_device == NULL)
-        goto error;
+    printf("sex1\n");
+    struct io_device *io_device = _find_io_device_by_id(id);
+    if(io_device == NULL) {
+        printf("Device not found!");
+        return;
+    }
 
-    // get lock for N ticks
     sema_down(&io_device->in_use);
+    printf("sex2\n");
     timer_sleep(ticks);
+    printf("sex3\n");
     sema_up(&io_device->in_use);
-
-error:
-    printf("Device not found!");
-    return;
+    printf("sex4\n");
 }

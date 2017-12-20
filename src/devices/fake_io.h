@@ -12,14 +12,13 @@
 static struct list io_devices = LIST_INITIALIZER(io_devices);
 
 struct io_device
-{
-    char name[16];                      /* io_device name. */
-    struct semaphore in_use;			/* Visual I/O */
+    {
+        unsigned id;                    /* io_device id. */
+        struct semaphore in_use;			/* Visual I/O */
+        struct list_elem list_elem;         /* Element in io_list. */
+    };
 
-    struct list_elem list_elem;         /* Element in io_list. */
-};
-
-void io_init(const char* name);
-void io_down(const char* name, const int64_t ticks);
+void io_init(const unsigned id);
+void io_down(const unsigned id, const unsigned ticks);
 
 #endif //SRC_FAKE_IO_H

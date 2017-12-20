@@ -129,9 +129,9 @@ pintos_init (void)
 #endif
 
   /* Add fake I/O devices */
-  io_init("A");
-  io_init("B");
-  io_init("C");
+  io_init(0);
+  io_init(1);
+  io_init(2);
 
   printf ("Boot complete.\n");
   
