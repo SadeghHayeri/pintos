@@ -45,7 +45,6 @@ _find_io_device_by_id(const unsigned id)
 void
 io_down(const unsigned id, const unsigned ticks)
 {
-    printf("sex1\n");
     struct io_device *io_device = _find_io_device_by_id(id);
     if(io_device == NULL) {
         printf("Device not found!");
@@ -53,9 +52,6 @@ io_down(const unsigned id, const unsigned ticks)
     }
 
     sema_down(&io_device->in_use);
-    printf("sex2\n");
     timer_sleep(ticks);
-    printf("sex3\n");
     sema_up(&io_device->in_use);
-    printf("sex4\n");
 }
