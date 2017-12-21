@@ -1,5 +1,15 @@
 # Pintos
 
+### setup environment
+```
+bash
+SWD=/Users/sadegh/Desktop/pintos/src/misc/toolchain
+PREFIX=$SWD/x86_64
+export PATH=$PREFIX/bin:$PATH
+export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH
+fish
+```
+
 ### build
 ```
 cd src/threads
