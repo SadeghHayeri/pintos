@@ -11,6 +11,8 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "thread.h"
+
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -40,9 +42,9 @@ static struct lock tid_lock;
 /* Stack frame for kernel_thread(). */
 struct kernel_thread_frame 
   {
-    void *eip;                  /* Return address. */
-    thread_func *function;      /* Function to call. */
-    void *aux;                  /* Auxiliary data for function. */
+	void *eip;                  /* Return address. */
+	thread_func *function;      /* Function to call. */
+	void *aux;                  /* Auxiliary data for function. */
   };
 
 /* Statistics. */
@@ -126,17 +128,17 @@ thread_tick (void)
 
   /* Update statistics. */
   if (t == idle_thread)
-    idle_ticks++;
+	idle_ticks++;
 #ifdef USERPROG
   else if (t->pagedir != NULL)
-    user_ticks++;
+	user_ticks++;
 #endif
   else
-    kernel_ticks++;
+	kernel_ticks++;
 
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
+	intr_yield_on_return ();
 }
 
 /* Prints thread statistics. */
@@ -144,7 +146,7 @@ void
 thread_print_stats (void) 
 {
   printf ("Thread: %lld idle ticks, %lld kernel ticks, %lld user ticks\n",
-          idle_ticks, kernel_ticks, user_ticks);
+		  idle_ticks, kernel_ticks, user_ticks);
 }
 
 /* Creates a new kernel thread named NAME with the given initial
@@ -164,7 +166,7 @@ thread_print_stats (void)
    Priority scheduling is the goal of Problem 1-3. */
 tid_t
 thread_create (const char *name, int priority,
-               thread_func *function, void *aux) 
+			   thread_func *function, void *aux)
 {
   struct thread *t;
   struct kernel_thread_frame *kf;
@@ -177,7 +179,7 @@ thread_create (const char *name, int priority,
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
   if (t == NULL)
-    return TID_ERROR;
+	return TID_ERROR;
 
   /* Initialize thread. */
   init_thread (t, name, priority);
@@ -258,10 +260,10 @@ thread_current (void)
   struct thread *t = running_thread ();
   
   /* Make sure T is really a thread.
-     If either of these assertions fire, then your thread may
-     have overflowed its stack.  Each thread has less than 4 kB
-     of stack, so a few big automatic arrays or moderate
-     recursion can cause stack overflow. */
+	 If either of these assertions fire, then your thread may
+	 have overflowed its stack.  Each thread has less than 4 kB
+	 of stack, so a few big automatic arrays or moderate
+	 recursion can cause stack overflow. */
   ASSERT (is_thread (t));
   ASSERT (t->status == THREAD_RUNNING);
 
@@ -287,8 +289,8 @@ thread_exit (void)
 #endif
 
   /* Remove thread from all threads list, set our status to dying,
-     and schedule another process.  That process will destroy us
-     when it calls thread_schedule_tail(). */
+	 and schedule another process.  That process will destroy us
+	 when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
@@ -308,7 +310,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+	list_push_back (&ready_list, &cur->elem);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -324,11 +326,11 @@ thread_foreach (thread_action_func *func, void *aux)
   ASSERT (intr_get_level () == INTR_OFF);
 
   for (e = list_begin (&all_list); e != list_end (&all_list);
-       e = list_next (e))
-    {
-      struct thread *t = list_entry (e, struct thread, allelem);
-      func (t, aux);
-    }
+	   e = list_next (e))
+	{
+	  struct thread *t = list_entry (e, struct thread, allelem);
+	  func (t, aux);
+	}
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
@@ -393,25 +395,25 @@ idle (void *idle_started_ UNUSED)
   sema_up (idle_started);
 
   for (;;) 
-    {
-      /* Let someone else run. */
-      intr_disable ();
-      thread_block ();
+	{
+	  /* Let someone else run. */
+	  intr_disable ();
+	  thread_block ();
 
-      /* Re-enable interrupts and wait for the next one.
+	  /* Re-enable interrupts and wait for the next one.
 
-         The `sti' instruction disables interrupts until the
-         completion of the next instruction, so these two
-         instructions are executed atomically.  This atomicity is
-         important; otherwise, an interrupt could be handled
-         between re-enabling interrupts and waiting for the next
-         one to occur, wasting as much as one clock tick worth of
-         time.
+		 The `sti' instruction disables interrupts until the
+		 completion of the next instruction, so these two
+		 instructions are executed atomically.  This atomicity is
+		 important; otherwise, an interrupt could be handled
+		 between re-enabling interrupts and waiting for the next
+		 one to occur, wasting as much as one clock tick worth of
+		 time.
 
-         See [IA32-v2a] "HLT", [IA32-v2b] "STI", and [IA32-v3a]
-         7.11.1 "HLT Instruction". */
-      asm volatile ("sti; hlt" : : : "memory");
-    }
+		 See [IA32-v2a] "HLT", [IA32-v2b] "STI", and [IA32-v3a]
+		 7.11.1 "HLT Instruction". */
+	  asm volatile ("sti; hlt" : : : "memory");
+	}
 }
 
 /* Function used as the basis for a kernel thread. */
@@ -432,9 +434,9 @@ running_thread (void)
   uint32_t *esp;
 
   /* Copy the CPU's stack pointer into `esp', and then round that
-     down to the start of a page.  Because `struct thread' is
-     always at the beginning of a page and the stack pointer is
-     somewhere in the middle, this locates the curent thread. */
+	 down to the start of a page.  Because `struct thread' is
+	 always at the beginning of a page and the stack pointer is
+	 somewhere in the middle, this locates the curent thread. */
   asm ("mov %%esp, %0" : "=g" (esp));
   return pg_round_down (esp);
 }
@@ -463,6 +465,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->io_need = 0;
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
@@ -490,10 +493,27 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
-  if (list_empty (&ready_list))
-    return idle_thread;
-  else
-    return list_entry (list_pop_front (&ready_list), struct thread, elem);
+	struct list_elem *max_io_need_elem = list_begin (&ready_list);
+	struct list_elem *e;
+	int max_io_need = -1;
+
+	if (list_empty (&ready_list)) {
+		return idle_thread;
+	} else {
+		// if any I/O thread exist, select that has max io_need
+		// if no I/O thread, select first elem in list
+		for(e = list_begin (&ready_list);
+			e != list_end (&ready_list);
+			e = list_next (e)) {
+				struct thread *thread = list_entry (e, struct thread, elem);
+				if (thread->io_need > max_io_need) {
+				  max_io_need_elem = e;
+				  max_io_need = thread->io_need;
+				}
+			}
+		list_remove(max_io_need_elem);
+		return list_entry(max_io_need_elem, struct thread, elem);
+	}
 }
 
 /* Completes a thread switch by activating the new thread's page
@@ -531,15 +551,15 @@ thread_schedule_tail (struct thread *prev)
 #endif
 
   /* If the thread we switched from is dying, destroy its struct
-     thread.  This must happen late so that thread_exit() doesn't
-     pull out the rug under itself.  (We don't free
-     initial_thread because its memory was not obtained via
-     palloc().) */
+	 thread.  This must happen late so that thread_exit() doesn't
+	 pull out the rug under itself.  (We don't free
+	 initial_thread because its memory was not obtained via
+	 palloc().) */
   if (prev != NULL && prev->status == THREAD_DYING && prev != initial_thread) 
-    {
-      ASSERT (prev != cur);
-      palloc_free_page (prev);
-    }
+	{
+	  ASSERT (prev != cur);
+	  palloc_free_page (prev);
+	}
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
@@ -561,7 +581,7 @@ schedule (void)
   ASSERT (is_thread (next));
 
   if (cur != next)
-    prev = switch_threads (cur, next);
+	prev = switch_threads (cur, next);
   thread_schedule_tail (prev);
 }
 

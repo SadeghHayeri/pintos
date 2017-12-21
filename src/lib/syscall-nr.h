@@ -29,6 +29,8 @@ enum
     SYS_READDIR,                /* Reads a directory entry. */
     SYS_ISDIR,                  /* Tests if a fd represents a directory. */
     SYS_INUMBER,                 /* Returns the inode number for a fd. */
+
+    SYS_IONEED,                  /* Tell how much I/O need */
     SYS_IODOWN                  /* Use fake I/O */
 };
 

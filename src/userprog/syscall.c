@@ -6,6 +6,7 @@
 #include "threads/thread.h"
 #include "userprog/pagedir.h"
 #include "devices/fake_io.h"
+#include "../lib/syscall-nr.h"
 
 #define MAX_ARGS 3
 void syscall_init (void);
@@ -49,6 +50,13 @@ syscall_handler (struct intr_frame *f UNUSED)
         case SYS_EXIT:
             printf ("Exit\n");
             thread_exit();
+            break;
+
+        case SYS_IONEED:
+            get_arg(f, arg, 2);
+            printf ("I/O need (%d, %d)\n", arg[0], arg[1]);
+            thread_current()->io_need += arg[1];
+            printf ("I/O need thread: (%d)\n", thread_current()->io_need);
             break;
 
         case SYS_IODOWN:

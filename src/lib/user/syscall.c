@@ -184,6 +184,11 @@ inumber (int fd)
 }
 
 void
+io_need(const int id, const int ticks) {
+    syscall2 (SYS_IONEED, id, ticks);
+}
+
+void
 io_down(const int id, const int ticks) {
     syscall2 (SYS_IODOWN, id, ticks);
 }
