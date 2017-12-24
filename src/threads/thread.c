@@ -12,6 +12,7 @@
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 #include "thread.h"
+#include "switch.h"
 
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -506,7 +507,7 @@ next_thread_to_run (void)
 			e != list_end (&ready_list);
 			e = list_next (e)) {
 				struct thread *thread = list_entry (e, struct thread, elem);
-				if (thread->io_need > max_io_need) {
+				if (thread->io_need != 0 && thread->io_need > max_io_need) {
 				  max_io_need_elem = e;
 				  max_io_need = thread->io_need;
 				}
