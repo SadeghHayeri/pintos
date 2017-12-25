@@ -62,6 +62,7 @@ syscall_handler (struct intr_frame *f UNUSED)
         case SYS_IODOWN:
             get_arg(f, arg, 2);
             printf ("I/O down (%d, %d)\n", arg[0], arg[1]);
+            thread_current()->io_need -= arg[1];
             io_down(arg[0], arg[1]);
             break;
     }

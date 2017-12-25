@@ -49,9 +49,7 @@ io_down(const unsigned id, const unsigned ticks)
         printf("Device not found!");
         return;
     }
-
-    thread_current()->io_need -= ticks;
-
+    
     sema_down(&io_device->in_use);
     timer_sleep(ticks);
     sema_up(&io_device->in_use);
